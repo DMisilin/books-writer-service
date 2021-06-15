@@ -1,0 +1,17 @@
+{
+  "port": 8008,
+  "db": {
+    "pg": {
+      "host": "localhost",
+      "port": 55006,
+      "database": "books-writer-service",
+      "schema": "books-writer-service",
+      "user": "postgres",
+      "password": "v8PTJk6EzB"
+    }
+  },
+  "content": {
+    "minSize": 10,
+    "maxSize": 20
+  }
+}
