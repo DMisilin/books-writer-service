@@ -1,4 +1,4 @@
-function index(db) {
+function run(db) {
     return async (request, response) => {
         console.log('--> Response to index');
         const result = await db.getQueryResult('getBooks');
@@ -8,4 +8,4 @@ function index(db) {
     }
 }
 
-module.exports = index;
+module.exports = run;

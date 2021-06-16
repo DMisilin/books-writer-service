@@ -1,25 +1,21 @@
-const {addContent} = require('../../module/common-methods.js');
+const MainMethod = require('../../module/main-method.js');
 
-function index(db) {
-    return async (request, response) => {
-        console.log('--> Request index');
+class AddContent extends MainMethod {
+    constructor(options) {
+        super(options);
+    }
 
-        const {text, bookId} = request.body.data;
+    run() {
+        return async (request, response) => {
+            console.log('--> Request AddContent');
 
-        const data = await addContent(response, db, {text, bookId});
+            const {text, bookId} = request.body.data;
+            const data = await this.addContent(response, {text, bookId});
 
-        // const bookHashes = await getHashByBookId();
-        //
-        // if (!bookHashes.length) {
-        //     await createBookContent();
-        // }
-        //
-        // const [result] = await db.getQueryResult('index', [text, bookId, contentHash, hashNext, hashPrev, false, false])
-        //     .catch(err => {response.send(err.message)});
-
-        console.log('<-- Response index');
-        response.send({data});
+            console.log('<-- Response AddContent: ', JSON.stringify(data));
+            response.send({data});
+        }
     }
 }
 
-module.exports = index;
+module.exports = AddContent;
