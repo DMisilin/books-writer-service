@@ -58,4 +58,18 @@ module.exports = {
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING hash;
     `,
+
+    modifyContent: `
+        UPDATE 
+            content 
+        SET 
+            text = $1, 
+            first = $2, 
+            last = $3,
+            hash_prev = $4,
+            hash_next = $5,
+            modify_datetime = NOW() 
+        WHERE 
+            hash = $6; 
+    `,
 };

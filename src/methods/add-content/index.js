@@ -10,7 +10,8 @@ class AddContent extends MainMethod {
             console.log('--> Request AddContent');
 
             const {text, bookId} = request.body.data;
-            const data = await this.addContent(response, {text, bookId});
+
+            const data = await this.addContentOnClean(response, {text, bookId});
 
             console.log('<-- Response AddContent: ', JSON.stringify(data));
             response.send({data});
