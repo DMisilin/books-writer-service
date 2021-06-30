@@ -6,11 +6,13 @@ const {
     modifyContent,
     removeContent,
 } = require('./methods/index.js');
+const middleware = require('./module/middleware.js');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(middleware.validateSchema());
 
 app.post('/books', getBooks);
 app.post('/add-content', addContent);

@@ -1,6 +1,6 @@
 const {createLogger, format, transports} = require('winston');
 const {combine, timestamp, label, printf} = format;
-const {version} = require('../package.json');
+const {version} = require('../../package.json');
 
 const myFormat = printf(({level, message, label, timestamp, ...args}) => {
     const data = JSON.stringify(args).replace(/\\/g, '');
@@ -28,4 +28,4 @@ class Log {
     }
 }
 
-module.exports = new Log();
+module.exports = Log;

@@ -1,13 +1,25 @@
 const {v4: uuidV4} = require('uuid');
 const db = require('./postgres/pg.js');
 const config = require('../config.json');
-const log = require('./logger.js');
+const log = require('./log/index.js');
 
 class MainMethod {
     constructor() {
         this.db = db;
         this.config = config;
-        this.log = log;
+        this.log = log.getLogger();
+    }
+
+    validateBody(requestBody, schema) {
+        this.log.info('--> Schema validate start');
+        const ajv = new Ajv();
+        const validator = ajv.compile(schema);
+
+        if (!validator(requestBody)) {
+            throw new Error('Error schema');
+        }
+
+        console.log('lo_ol__line_23 :: WOW!');
     }
 
     async addContentOnClean({text, bookId}) {

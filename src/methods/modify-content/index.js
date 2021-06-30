@@ -1,4 +1,5 @@
 const {v4: uuidV4} = require('uuid');
+const schema = require('./schema.js');
 const MainMethod = require('../../module/main-method.js');
 
 class ModifyContent extends MainMethod {
@@ -8,6 +9,7 @@ class ModifyContent extends MainMethod {
 
     run() {
         return async(request, response) => {
+            this.validateBody(request.body.data, schema);
             this.log.info('--> Request ModifyContent');
             const {text, hash} = request.body.data;
             const [contentData] = await this.db.getQueryResult('getContentByHash', [hash]);
@@ -25,6 +27,7 @@ class ModifyContent extends MainMethod {
             if (texts.length === 1) {
                 await this.db.getQueryResult('modifyContentWithText', [text, first, last, hashPrev, hashNext, hash]);
                 response.send({data: {}});
+                return;
             }
 
             const currentHash = uuidV4();
