@@ -17,7 +17,7 @@ module.exports = {
             }
 
             log.info('<-- Schema validate complete');
-            return true;
+            next();
         }
     }
 }
