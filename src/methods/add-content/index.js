@@ -7,13 +7,18 @@ class AddContent extends MainMethod {
 
     run() {
         return async (request, response) => {
-            console.log('--> Request AddContent');
-
+            this.log.info('--> Request AddContent');
             const {text, bookId} = request.body.data;
+            let data;
 
-            const data = await this.addContentOnClean(response, {text, bookId});
+            try {
+                data = await this.addContentOnClean({text, bookId});
+            } catch (err) {
+                response.status(400).send({error: err.message});
+                return;
+            }
 
-            console.log('<-- Response AddContent: ', JSON.stringify(data));
+            this.log.info('<-- Response AddContent: ', JSON.stringify(data));
             response.send({data});
         }
     }

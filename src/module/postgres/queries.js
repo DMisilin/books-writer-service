@@ -1,7 +1,14 @@
 module.exports = {
+    // TEST
     getTime: `SELECT NOW();`,
     getTest: `SELECT * FROM books;`,
 
+    // TRANSACTION
+    startTransaction: `BEGIN;`,
+    finishTransaction: `COMMIT;`,
+    rejectTransaction: `ROLLBACK;`,
+
+    // SELECT
     getBooks: `
         SELECT
             book_id AS "bookId",
@@ -44,6 +51,7 @@ module.exports = {
             AND hash = $1; 
     `,
 
+    // INSERT
     addContent: `
         INSERT INTO 
             content (
@@ -59,7 +67,8 @@ module.exports = {
         RETURNING hash;
     `,
 
-    modifyContent: `
+    // UPDATE
+    modifyContentWithText: `
         UPDATE 
             content 
         SET 
@@ -71,5 +80,38 @@ module.exports = {
             modify_datetime = NOW() 
         WHERE 
             hash = $6; 
+    `,
+
+    modifyContentHashPrev: `
+        UPDATE 
+            content 
+        SET 
+            hash_prev = $1,
+            first = $2,
+            last = $3,
+            modify_datetime = NOW() 
+        WHERE 
+            hash = $4; 
+    `,
+
+    modifyContentHashNext: `
+        UPDATE 
+            content 
+        SET 
+            hash_next = $1,
+            first = $2,
+            last = $3,
+            modify_datetime = NOW() 
+        WHERE 
+            hash = $4; 
+    `,
+
+    // DELETE
+    removeContent: `
+        DELETE 
+        FROM 
+            content 
+        WHERE 
+            hash = $1;
     `,
 };

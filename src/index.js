@@ -4,6 +4,7 @@ const {
     getBooks,
     addContent,
     modifyContent,
+    removeContent,
 } = require('./methods/index.js');
 
 const app = express();
@@ -11,9 +12,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.post('/books', new getBooks().run());
-app.post('/add-content', new addContent().run());
-app.post('/modify-content', new modifyContent().run());
+app.post('/books', getBooks);
+app.post('/add-content', addContent);
+app.post('/modify-content', modifyContent);
+app.post('/remove-content', removeContent);
 
 app.listen(port, (err) => {
     if (err) {

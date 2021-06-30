@@ -24,6 +24,7 @@ COMMENT ON COLUMN books.create_datetime IS 'Дата и время создан�
 COMMENT ON COLUMN books.state IS 'Состояние книги';
 
  CREATE TABLE content (
+     content_id BIGSERIAL,
      text TEXT NOT NULL,
      book_id INTEGER NOT NULL
         CONSTRAINT content_book_id_fkey
@@ -39,6 +40,7 @@ COMMENT ON COLUMN books.state IS 'Состояние книги';
  );
 
 COMMENT ON TABLE content IS 'Таблица с контентом книг';
+COMMENT ON COLUMN content.content_id IS 'Идентификатор контент (для нагляжности в тестировании)';
 COMMENT ON COLUMN content.text IS 'Текст блока';
 COMMENT ON COLUMN content.book_id IS 'Идентификатор книги';
 COMMENT ON COLUMN content.hash IS 'Хэш блока контента';

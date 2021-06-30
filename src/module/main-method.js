@@ -1,15 +1,17 @@
 const {v4: uuidV4} = require('uuid');
 const db = require('./postgres/pg.js');
 const config = require('../config.json');
+const log = require('./logger.js');
 
 class MainMethod {
     constructor() {
         this.db = db;
         this.config = config;
+        this.log = log;
     }
 
-    async addContentOnClean(response, {text, bookId}) {
-        const texts = this.breakText(text);
+    async addContentOnClean({text, bookId}) {
+        const texts = this.splitText(text);
         const result = [];
 
         let addedHash;
@@ -18,20 +20,15 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            try {
-                [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
-                    texts[i],
-                    bookId,
-                    contentHash,
-                    hashNext,
-                    hashPrev,
-                    i === texts.length - 1,
-                    i === 0,
-                ]);
-            } catch(err) {
-                console.error('Error for add new content! Msg: ', err.message);
-                response.status(400).send({error: `CAN_NOT_ADD_CONTENT`});
-            }
+            [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
+                texts[i],
+                bookId,
+                contentHash,
+                hashNext,
+                hashPrev,
+                i === texts.length - 1,
+                i === 0,
+            ]);
 
             result.push(addedHash);
             hashPrev = contentHash;
@@ -42,7 +39,15 @@ class MainMethod {
         return {result};
     }
 
-    async addContent(response, {texts, bookId, first = false, last = false, currentHash, oldHashPref = null, oldHashNext = null}) {
+    async addContent(params) {
+        const {
+            texts,
+            bookId,
+            last = false,
+            currentHash,
+            oldHashPref = null,
+            oldHashNext = null
+        } = params;
         const result = [];
 
         let addedHash;
@@ -51,20 +56,15 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            try {
-                [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
-                    texts[i],
-                    bookId,
-                    contentHash,
-                    hashNext,
-                    hashPrev,
-                    i === texts.length - 1 && last ? last : false,
-                    false,
-                ]);
-            } catch(err) {
-                console.error('Error for add new content! Msg: ', err.message);
-                response.status(400).send({error: `CAN_NOT_ADD_CONTENT`});
-            }
+            [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
+                texts[i],
+                bookId,
+                contentHash,
+                hashNext,
+                hashPrev,
+                i === texts.length - 1 && last ? last : false,
+                false,
+            ]);
 
             result.push(addedHash);
             hashPrev = contentHash;
@@ -75,23 +75,27 @@ class MainMethod {
         return {result, hashPrev, hashNext};
     }
 
-    async modifyContent(response, {hash = uuidV4(), hashPrev = uuidV4(), hashNext = uuidV4(), text, first = false, last = false}) {
-        try {
-            await this.db.getQueryResult('modifyContent', [
-                text,
-                first,
-                last,
-                hashPrev,
-                hashNext,
-                hash,
-            ]);
-        } catch(err) {
-            console.log(`Error for modify content by hash: '${hash}'. Msg: ${err.message}`);
-            response.status(400).send({error: 'CAN_NOT_MODIFY_CONTENT'});
-        }
+    async modifyContent(params) {
+        const {
+            hash = uuidV4(),
+            hashPrev = uuidV4(),
+            hashNext = uuidV4(),
+            text,
+            first = false,
+            last = false
+        } = params;
+
+        await this.db.getQueryResult('modifyContentWithText', [
+            text,
+            first,
+            last,
+            hashPrev,
+            hashNext,
+            hash,
+        ]);
     }
 
-    breakText(text) {
+    splitText(text) {
         const result = [];
         const {maxSize} = this.config.content;
 
@@ -105,7 +109,7 @@ class MainMethod {
             tail = tail.slice(maxSize / 2);
 
             result.push(head);
-        } while(tail.length > maxSize);
+        } while (tail.length > maxSize);
 
         result.push(tail);
 

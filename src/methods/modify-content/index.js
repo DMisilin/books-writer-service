@@ -8,49 +8,52 @@ class ModifyContent extends MainMethod {
 
     run() {
         return async(request, response) => {
-            console.log('--> Request ModifyContent');
-
+            this.log.info('--> Request ModifyContent');
             const {text, hash} = request.body.data;
             const [contentData] = await this.db.getQueryResult('getContentByHash', [hash]);
 
             if (!contentData) {
-                console.error(`Content with hash: '${hash}' not found`);
+                this.log.error(`Content with hash: '${hash}' not found`);
                 response.status(404).send({error: `CONTENT_NOT_FOUND`});
                 return;
             }
 
             const {last, first, bookId, hashPrev, hashNext} = contentData;
 
-            const texts = this.breakText(text);
+            const texts = this.splitText(text);
 
             if (texts.length === 1) {
-                await this.db.getQueryResult('modifyContent', [text, first, last, hashPrev, hashNext, hash]);
+                await this.db.getQueryResult('modifyContentWithText', [text, first, last, hashPrev, hashNext, hash]);
                 response.send({data: {}});
             }
 
             const currentHash = uuidV4();
 
-            await this.modifyContent(response, {
-                hash,
-                hashPrev,
-                hashNext: currentHash,
-                text: texts[0],
-                first
-            });
+            try {
+                await this.modifyContent(response, {
+                    hash,
+                    hashPrev,
+                    hashNext: currentHash,
+                    text: texts[0],
+                    first
+                });
 
-            await this.addContent(request, {
-                texts: texts.slice(1),
-                bookId,
-                first,
-                last,
-                currentHash,
-                oldHashPref: hash,
-                oldHashNext: hashNext
-            });
+                await this.addContent(request, {
+                    texts: texts.slice(1),
+                    bookId,
+                    first,
+                    last,
+                    currentHash,
+                    oldHashPref: hash,
+                    oldHashNext: hashNext
+                });
+            } catch (err) {
+                response.status(400).send({error: err.message});
+                return;
+            }
 
             response.send({data: {}});
-
-            console.log('<-- Response ModifyContent');
+            this.log.info('<-- Response ModifyContent');
         }
     }
 }

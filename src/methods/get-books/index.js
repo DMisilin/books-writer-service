@@ -7,10 +7,17 @@ class GetBooks extends MainMethod {
 
     run() {
         return async (request, response) => {
-            console.log('--> Response getBooks');
-            const result = await this.db.getQueryResult('getBooks');
+            this.log.info('--> Response getBooks');
+            let result;
 
-            console.log('<-- Result getBooks: ', JSON.stringify(result));
+            try {
+                result = await this.db.getQueryResult('getBooks');
+            } catch (err) {
+                response.status(400).send({error: err.message});
+                return;
+            }
+
+            this.log.info('<-- Result getBooks: ', JSON.stringify(result));
             response.send(result);
         }
     }
