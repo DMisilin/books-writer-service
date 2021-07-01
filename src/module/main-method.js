@@ -10,18 +10,6 @@ class MainMethod {
         this.log = log.getLogger();
     }
 
-    validateBody(requestBody, schema) {
-        this.log.info('--> Schema validate start');
-        const ajv = new Ajv();
-        const validator = ajv.compile(schema);
-
-        if (!validator(requestBody)) {
-            throw new Error('Error schema');
-        }
-
-        console.log('lo_ol__line_23 :: WOW!');
-    }
-
     async addContentOnClean({text, bookId}) {
         const texts = this.splitText(text);
         const result = [];

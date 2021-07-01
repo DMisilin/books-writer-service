@@ -7,8 +7,16 @@ module.exports = {
         return async (request, response, next) => {
             log.info('--> Schema validate start');
             const ajv = new Ajv();
-            const schema = require(`${process.cwd()}/methods${request.url}/schema.js`);
-            const validator = ajv.compile(schema);
+            let validator;
+
+            try {
+                const schema = require(`${process.cwd()}/methods${request.url}/schema.js`);
+                validator = ajv.compile(schema);
+            } catch(err) {
+                log.error(`Error schema require: `, err.message);
+                response.status(400).send({error: 'ERROR_SCHEMA_REQUIRE'});
+                return;
+            }
 
             if (!validator(request.body.data)) {
                 log.error('Error validate body! Msg: ', validator.errors[0].message);
