@@ -49,12 +49,15 @@ class ModifyContent extends MainMethod {
                     oldHashNext: hashNext
                 });
             } catch (err) {
+                this.log.error('Error modify contents! Msg: ', err.message);
                 response.status(400).send({error: err.message});
                 return;
             }
 
-            response.send({data: {}});
             this.log.info('<-- Response ModifyContent');
+            this.showSpendTime(request);
+
+            response.send({data: {}});
         }
     }
 }

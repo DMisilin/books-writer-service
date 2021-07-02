@@ -3,11 +3,7 @@ module.exports = {
     additionalProperties: false,
     required: ['text', 'hash'],
     properties: {
-        text: {
-            type: 'string'
-        },
-        hash: {
-            type: 'string'
-        }
+        text: {type: 'string'},
+        hash: {type: 'string'}
     }
 }

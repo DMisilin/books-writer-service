@@ -1,8 +1,5 @@
 {
   "port": 8008,
-  "log": {
-    "level": "debug"
-  },
   "db": {
     "pg": {
       "host": "localhost",

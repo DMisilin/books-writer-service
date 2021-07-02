@@ -6,17 +6,18 @@ const {
     modifyContent,
     removeContent,
 } = require('./methods/index.js');
-const middleware = require('./module/middleware.js');
+const {validateSchema, setStartTime} = require('./module/middleware.js');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(middleware.validateSchema());
+app.use(validateSchema());
+app.use(setStartTime());
 
-app.post('/get-books', getBooks);
+app.get('/get-books', getBooks);
 app.post('/add-content', addContent);
-app.post('/modify-content', modifyContent);
+app.get('/modify-content', modifyContent);
 app.post('/remove-content', removeContent);
 
 app.listen(port, (err) => {

@@ -1,11 +1,11 @@
 const Ajv = require('ajv');
-const logger = require('./log/index.js');
-const log = logger.getLogger();
+const Log = require('./log/logger.js');
+const log = new Log();
 
 module.exports = {
     validateSchema() {
         return async (request, response, next) => {
-            log.info('--> Schema validate start');
+            log.info('--> Schema validate start', request.body.data);
             const ajv = new Ajv();
             let validator;
 
@@ -25,6 +25,13 @@ module.exports = {
             }
 
             log.info('<-- Schema validate complete');
+            next();
+        }
+    },
+
+    setStartTime() {
+        return async (request, response, next) => {
+            request.startTime = new Date();
             next();
         }
     }

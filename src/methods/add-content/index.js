@@ -7,7 +7,7 @@ class AddContent extends MainMethod {
 
     run() {
         return async (request, response) => {
-            this.log.info('--> Request AddContent');
+            this.log.info('--> Request AddContent ');
             const {text, bookId} = request.body.data;
             let data;
 
@@ -19,6 +19,8 @@ class AddContent extends MainMethod {
             }
 
             this.log.info('<-- Response AddContent: ', JSON.stringify(data));
+            this.showSpendTime(request);
+
             response.send({data});
         }
     }

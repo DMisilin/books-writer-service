@@ -1,13 +1,13 @@
 const {v4: uuidV4} = require('uuid');
 const db = require('./postgres/pg.js');
-const config = require('../config.json');
-const log = require('./log/index.js');
+const Config = require('./config/index.js');
+const Log = require('./log/logger.js');
 
 class MainMethod {
     constructor() {
         this.db = db;
-        this.config = config;
-        this.log = log.getLogger();
+        this.config = new Config().get();
+        this.log = new Log();
     }
 
     async addContentOnClean({text, bookId}) {
@@ -114,6 +114,11 @@ class MainMethod {
         result.push(tail);
 
         return result;
+    }
+
+    showSpendTime({startTime = new Date(), url}) {
+        const endTime = new Date();
+        this.log.info(`Spend time for '${url}' - ${(endTime - startTime) / 1000}s`);
     }
 }
 

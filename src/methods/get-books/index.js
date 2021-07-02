@@ -18,6 +18,8 @@ class GetBooks extends MainMethod {
             }
 
             this.log.info('<-- Result getBooks: ', JSON.stringify(result));
+            this.showSpendTime(request);
+
             response.send(result);
         }
     }

@@ -44,6 +44,8 @@ class RemoveContent extends MainMethod {
             }
 
             this.log.info('<-- Result RemoveContent: ');
+            this.showSpendTime(request);
+
             response.send({data: {}});
         }
     }
