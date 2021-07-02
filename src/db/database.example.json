@@ -1,0 +1,11 @@
+{
+  "pg": {
+    "host": "localhost",
+    "database": "database_name",
+    "schema": "schema_name",
+    "user": "user",
+    "password": "password",
+    "port": 5432,
+    "max": 10
+  }
+}

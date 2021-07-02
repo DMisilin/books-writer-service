@@ -1,0 +1,11 @@
+{
+  "pg": {
+    "driver": "pg",
+    "host": "localhost",
+    "port": 55004,
+    "database": "books-writer-service",
+    "schema": "books-writer-service",
+    "user": "postgres",
+    "password": "v8PTJk6EzB"
+  }
+}
