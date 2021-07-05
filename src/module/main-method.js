@@ -29,7 +29,7 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            [{hash: addedHash}] = await this.db.getQueryResultUpg('addContent',
+            [{hash: addedHash}] = await this.db.getQueryResult('addContent',
                 {
                     text: texts[i],
                     bookId: bookId,
@@ -71,7 +71,7 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            [{hash: addedHash}] = await this.db.getQueryResultUpg('addContent',
+            [{hash: addedHash}] = await this.db.getQueryResult('addContent',
                 {
                     text: texts[i],
                     bookId,
@@ -105,7 +105,7 @@ class MainMethod {
             last = false
         } = params;
 
-        await this.db.getQueryResultUpg('modifyContentWithText', {
+        await this.db.getQueryResult('modifyContentWithText', {
             text,
             first,
             last,

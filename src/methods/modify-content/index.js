@@ -10,7 +10,7 @@ class ModifyContent extends MainMethod {
         return async(request, response) => {
             this.log.info('--> Request ModifyContent');
             const {text, hash} = request.body.data;
-            const [contentData] = await this.db.getQueryResultUpg('getContentByHash', {hash});
+            const [contentData] = await this.db.getQueryResult('getContentByHash', {hash});
 
             if (!contentData) {
                 this.log.error(`Content with hash: '${hash}' not found`);
@@ -23,7 +23,7 @@ class ModifyContent extends MainMethod {
             const texts = this.splitText(text);
 
             if (texts.length === 1) {
-                await this.db.getQueryResultUpg('modifyContentWithText',
+                await this.db.getQueryResult('modifyContentWithText',
                     {
                         text,
                         first,

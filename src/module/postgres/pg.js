@@ -6,37 +6,11 @@ const pool = new Pool(pgConf);
 
 module.exports = {
     /**
-     * Method for get info from db
-     * @param {string} queryName Text
-     * @param {Array} params Params
-     * */
-    async getQueryResult (queryName, params = []) {
-        let client;
-        let data;
-
-        if (!queries[queryName]) {
-            throw new Error(`Query with name: '${queryName}' not found`);
-        }
-
-        try {
-            client = await pool.connect();
-            data = await client.query(queries[queryName], params);
-        } catch (err) {
-            console.error('Error! ', err.message);
-            throw err;
-        } finally {
-            if (client) client.release();
-        }
-
-        return data.rows || [];
-    },
-
-    /**
      * Method from db by upgrade query
      * @param {string} queryName Text
      * @param {Object} params Params
      * */
-    async getQueryResultUpg (queryName, params = {}) {
+    async getQueryResult(queryName, params = {}) {
         let client;
         let data;
 
@@ -77,5 +51,5 @@ module.exports = {
         }
 
         return result;
-    }
+    },
 };

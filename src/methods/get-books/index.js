@@ -11,7 +11,7 @@ class GetBooks extends MainMethod {
             let result;
 
             try {
-                result = await this.db.getQueryResultUpg('getBooks');
+                result = await this.db.getQueryResult('getBooks');
             } catch (err) {
                 response.status(400).send({error: err.message});
                 return;
