@@ -14,11 +14,12 @@ class AddContent extends MainMethod {
             try {
                 data = await this.addContentOnClean({text, bookId});
             } catch (err) {
+                this.log.error(`Error add content! Msg: `, err.message);
                 response.status(400).send({error: err.message});
                 return;
             }
 
-            this.log.info('<-- Response AddContent: ', JSON.stringify(data));
+            this.log.info('<-- Response AddContent: ');
             this.showSpendTime(request);
 
             response.send({data});

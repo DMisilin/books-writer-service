@@ -3,6 +3,9 @@ const Log = require('./log/logger.js');
 const log = new Log();
 
 module.exports = {
+    /**
+     * Middleware validation schema
+     * */
     validateSchema() {
         return async (request, response, next) => {
             log.info('--> Schema validate start', request.body.data);
@@ -29,6 +32,9 @@ module.exports = {
         }
     },
 
+    /**
+     * Middleware set start time
+     * */
     setStartTime() {
         return async (request, response, next) => {
             request.startTime = new Date();

@@ -15,9 +15,9 @@ app.use(express.urlencoded({extended: true}));
 app.use(validateSchema());
 app.use(setStartTime());
 
-app.get('/get-books', getBooks);
+app.post('/get-books', getBooks);
 app.post('/add-content', addContent);
-app.get('/modify-content', modifyContent);
+app.post('/modify-content', modifyContent);
 app.post('/remove-content', removeContent);
 
 app.listen(port, (err) => {

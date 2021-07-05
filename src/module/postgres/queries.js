@@ -33,7 +33,7 @@ module.exports = {
             books 
         WHERE
             state = 'enabled' 
-            AND book_id = $1; 
+            AND book_id = :bookId; 
     `,
 
     getContentByHash: `
@@ -48,7 +48,7 @@ module.exports = {
             content 
         WHERE 
             state = 'enabled' 
-            AND hash = $1; 
+            AND hash = :hash; 
     `,
 
     // INSERT
@@ -63,7 +63,7 @@ module.exports = {
                 last, 
                 first
                 )
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        VALUES (:text, :bookId, :hash, :hashNext, :hashPrev, :last, :first)
         RETURNING hash;
     `,
 
@@ -72,38 +72,38 @@ module.exports = {
         UPDATE 
             content 
         SET 
-            text = $1, 
-            first = $2, 
-            last = $3,
-            hash_prev = $4,
-            hash_next = $5,
+            text = :text, 
+            first = :first, 
+            last = :last,
+            hash_prev = :hashPrev,
+            hash_next = :hashNext,
             modify_datetime = NOW() 
         WHERE 
-            hash = $6; 
+            hash = :hash; 
     `,
 
     modifyContentHashPrev: `
         UPDATE 
             content 
         SET 
-            hash_prev = $1,
-            first = $2,
-            last = $3,
+            hash_prev = :hashPrev,
+            first = :first,
+            last = :last,
             modify_datetime = NOW() 
         WHERE 
-            hash = $4; 
+            hash = :hash; 
     `,
 
     modifyContentHashNext: `
         UPDATE 
             content 
         SET 
-            hash_next = $1,
-            first = $2,
-            last = $3,
+            hash_next = :hashNext,
+            first = :first,
+            last = :last,
             modify_datetime = NOW() 
         WHERE 
-            hash = $4; 
+            hash = :hash; 
     `,
 
     // DELETE
@@ -112,6 +112,6 @@ module.exports = {
         FROM 
             content 
         WHERE 
-            hash = $1;
+            hash = :hash;
     `,
 };

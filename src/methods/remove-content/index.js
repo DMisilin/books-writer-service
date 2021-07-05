@@ -10,7 +10,7 @@ class RemoveContent extends MainMethod {
             this.log.info('--> Response RemoveContent');
             const {hash} = request.body.data;
 
-            const [{hashPrev, hashNext, first, last}] = await this.db.getQueryResult('getContentByHash', [hash]);
+            const [{hashPrev, hashNext, first, last}] = await this.db.getQueryResultUpg('getContentByHash', {hash});
 
             if (!hashPrev && !hashNext) {
                 this.log.error(`Content by hash: '${hash}' not found`);
@@ -18,8 +18,8 @@ class RemoveContent extends MainMethod {
             }
 
             const [[contentPrev], [contentNext]] = await Promise.all([
-                this.db.getQueryResult('getContentByHash', [hashPrev]),
-                this.db.getQueryResult('getContentByHash', [hashNext]),
+                this.db.getQueryResultUpg('getContentByHash', {hash: hashPrev}),
+                this.db.getQueryResultUpg('getContentByHash', {hash: hashNext}),
             ]);
 
             if (!contentPrev && !contentNext) {
@@ -35,12 +35,13 @@ class RemoveContent extends MainMethod {
                     await this.modifyContentHashPrev(hashPrev, first, contentNext),
                 ]);
 
-                await this.db.getQueryResult('removeContent', [hash]);
-                await this.db.getQueryResult('finishTransaction');
+                await this.db.getQueryResultUpg('removeContent', {hash});
+                await this.db.getQueryResultUpg('finishTransaction');
             } catch(err) {
                 await this.db.getQueryResult('rejectTransaction');
                 this.log.error(`Error for modify contents with hash: [${contentPrev.hash}, ${contentNext.hash}]`);
                 response.status(400).send({error: 'CAN_NOT_REMOVE'});
+                return;
             }
 
             this.log.info('<-- Result RemoveContent: ');
@@ -52,13 +53,25 @@ class RemoveContent extends MainMethod {
 
     async modifyContentHashNext(hashNext, last, contentPrev) {
         if (contentPrev) {
-            await this.db.getQueryResult('modifyContentHashNext', [hashNext, false, last, contentPrev.hash])
+            await this.db.getQueryResultUpg('modifyContentHashNext',
+                {
+                    hashNext,
+                    first: false,
+                    last,
+                    hash: contentPrev.hash
+                });
         }
     }
 
     async modifyContentHashPrev(hashPrev, first, contentNext) {
         if (contentNext) {
-            await this.db.getQueryResult('modifyContentHashPrev', [hashPrev, first, false, contentNext.hash])
+            await this.db.getQueryResultUpg('modifyContentHashPrev',
+                {
+                    hashPrev,
+                    first,
+                    last: false,
+                    hash: contentNext.hash
+                });
         }
     }
 }

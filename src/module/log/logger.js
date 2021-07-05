@@ -8,6 +8,9 @@ const myFormat = printf(({level, message, label, timestamp, ...args}) => {
 });
 
 class Log {
+    /**
+     * Log Constructor
+     * */
     constructor() {
         this.logger = createLogger({
             format: combine(
@@ -19,10 +22,20 @@ class Log {
         });
     }
 
+    /**
+     * Method info log
+     * @param {string} msg Text
+     * @param {Array} args Params
+     * */
     info(msg, ...args) {
         this.logger.log('info', msg, args);
     }
 
+    /**
+     * Method erro log
+     * @param {string} msg Text
+     * @param {Array} args Params
+     * */
     error(msg, ...args) {
         this.logger.log('error', msg, args);
     }

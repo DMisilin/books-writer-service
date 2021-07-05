@@ -4,12 +4,21 @@ const Config = require('./config/index.js');
 const Log = require('./log/logger.js');
 
 class MainMethod {
+    /**
+     * Main Method Constructor
+     * */
     constructor() {
         this.db = db;
         this.config = new Config().get();
         this.log = new Log();
     }
 
+    /**
+     * Method create first content
+     * @param {Object} params Params
+     * @param {string} params.text Text content
+     * @param {number} params.bookId Book id
+     * */
     async addContentOnClean({text, bookId}) {
         const texts = this.splitText(text);
         const result = [];
@@ -20,15 +29,16 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
-                texts[i],
-                bookId,
-                contentHash,
-                hashNext,
-                hashPrev,
-                i === texts.length - 1,
-                i === 0,
-            ]);
+            [{hash: addedHash}] = await this.db.getQueryResultUpg('addContent',
+                {
+                    text: texts[i],
+                    bookId: bookId,
+                    hash: contentHash,
+                    hashNext,
+                    hashPrev,
+                    last: i === texts.length - 1,
+                    first: i === 0
+                });
 
             result.push(addedHash);
             hashPrev = contentHash;
@@ -39,6 +49,11 @@ class MainMethod {
         return {result};
     }
 
+    /**
+     * Method create content
+     * @param {Object} params Params
+     * @return {Object} result {result, hashPrev, hashNext}
+     * */
     async addContent(params) {
         const {
             texts,
@@ -56,15 +71,16 @@ class MainMethod {
         let hashNext = uuidV4();
 
         for (let i = 0; i < texts.length; i++) {
-            [{hash: addedHash}] = await this.db.getQueryResult('addContent', [
-                texts[i],
-                bookId,
-                contentHash,
-                hashNext,
-                hashPrev,
-                i === texts.length - 1 && last ? last : false,
-                false,
-            ]);
+            [{hash: addedHash}] = await this.db.getQueryResultUpg('addContent',
+                {
+                    text: texts[i],
+                    bookId,
+                    hash: contentHash,
+                    hashNext,
+                    hashPrev,
+                    last: i === texts.length - 1 && last ? last : false,
+                    first: false
+                });
 
             result.push(addedHash);
             hashPrev = contentHash;
@@ -75,6 +91,10 @@ class MainMethod {
         return {result, hashPrev, hashNext};
     }
 
+    /**
+     * Method modify content
+     * @param {Object} params Params
+     * */
     async modifyContent(params) {
         const {
             hash = uuidV4(),
@@ -85,16 +105,21 @@ class MainMethod {
             last = false
         } = params;
 
-        await this.db.getQueryResult('modifyContentWithText', [
+        await this.db.getQueryResultUpg('modifyContentWithText', {
             text,
             first,
             last,
             hashPrev,
             hashNext,
             hash,
-        ]);
+        });
     }
 
+    /**
+     * Method split text
+     * @param {string} text Text
+     * @return {array<string>} result Result
+     * */
     splitText(text) {
         const result = [];
         const {maxSize} = this.config.content;
@@ -116,6 +141,12 @@ class MainMethod {
         return result;
     }
 
+    /**
+     * Method logging spend time
+     * @param {Object} request Request
+     * @param {Date} [request.startTime = new Date()] Time start method
+     * @param {string} request.url Url
+     * */
     showSpendTime({startTime = new Date(), url}) {
         const endTime = new Date();
         this.log.info(`Spend time for '${url}' - ${(endTime - startTime) / 1000}s`);
